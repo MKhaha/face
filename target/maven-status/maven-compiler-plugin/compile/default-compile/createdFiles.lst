@@ -1,0 +1,7 @@
+com\xieguotao\face\controller\FaceController.class
+com\xieguotao\face\dao\FaceResult.class
+com\xieguotao\face\dao\MyFaceInfo.class
+com\xieguotao\face\dao\ImportPersonUrls.class
+com\xieguotao\face\FaceApplication.class
+com\xieguotao\face\service\FaceRecognition.class
+com\xieguotao\face\util\ImageUtil.class
