@@ -17,7 +17,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
-		<docker.image.prefix>myDocker</docker.image.prefix>
+		<docker.image.prefix>mydocker</docker.image.prefix>
 		<maven.test.skip>true</maven.test.skip>
 	</properties>
 
