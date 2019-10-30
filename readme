@@ -1,0 +1,20 @@
+## ubuntu上运行
+### 克隆工程
+cd ~
+git clone https://github.com/MKhaha/face.git
+### 创建文件夹
+cd ~
+mkdir faceLocal
+cd ./faceLocal
+mkdir arcsoft-lib
+mkdir static
+mkdir test
+cd static
+mkdir facePhoto
+mkdir importantPerson
+mkdir original
+### 拷贝库文件
+cd ~/face/lib/ArcSoft_ArcFace_Java_Linux_x64_V2.2/libs/LINUX64
+cp * ~/faceLocal/arcsoft-lib/
+### 安装nginx
+
