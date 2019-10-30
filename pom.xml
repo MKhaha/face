@@ -79,6 +79,11 @@
 							<directory>${project.build.directory}</directory>
 							<include>${project.build.finalName}.jar</include>
 						</resource>
+<!--						<resource>-->
+<!--							<targetPath>/</targetPath>-->
+<!--							<directory>${project.build.outputDirectory}</directory>&lt;!&ndash; 资源所在目录 &ndash;&gt;-->
+<!--							<include>config/fdfs_client.conf</include> &lt;!&ndash; 程序依赖的fastfds配置文件 &ndash;&gt;-->
+<!--						</resource>-->
 					</resources>
 					<!-- 与maven配置文件settings.xml中配置的server.id一致，用于推送镜像 -->
 					<serverId>docker-hub</serverId>

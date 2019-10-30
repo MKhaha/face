@@ -33,7 +33,7 @@ public class FaceRecognition implements InitializingBean, DisposableBean {
 
     // 对外静态文件地址前缀
     private String addressAndPort = "http://localhost:8083/static/";
-    private String faceLocal = System.getenv("FACELOCAL");
+    private String faceLocal = "/root/faceLocal/";
     // 本地存储对外文件地址前缀
     private String localFilePrefix = faceLocal + "static/";
 
@@ -150,7 +150,8 @@ public class FaceRecognition implements InitializingBean, DisposableBean {
         String appId = "4GDCFPjtDcWwcsUxmpA9M2T6xq4bpsUB2dCYQ7H9sgKi";
         String sdkKey = "7rKvRkiwJKhoyVuTxw7gs4WNxz5PxRSTRvdWdkaN6wU5";
 
-        FaceEngine faceEngine = new FaceEngine(faceLocal +  "arcsoft-lib");
+//        FaceEngine faceEngine = new FaceEngine(faceLocal +  "arcsoft-lib");
+        FaceEngine faceEngine = new FaceEngine(faceLocal);
         //激活引擎
         int activeCode = faceEngine.activeOnline(appId, sdkKey);
 
