@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="71f106db-75cd-455b-abc9-2e457473b126" name="Default Changelist" comment="">
+    <list default="true" id="71f106db-75cd-455b-abc9-2e457473b126" name="Default Changelist" comment="上传依赖包">
+      <change afterPath="$PROJECT_DIR$/ArcFace64.dat" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/readme" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/xieguotao/face/service/FaceRecognition.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/xieguotao/face/service/FaceRecognition.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/application.properties" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -36,8 +42,11 @@
     </option>
   </component>
   <component name="ProjectId" id="1SeMUcJQxN1wLCc50MlWc5nu1cA" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/src/main" />
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
@@ -62,7 +71,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Application.FaceApplication">
     <configuration name="FaceApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.xieguotao.face.FaceApplication" />
       <module name="face" />
@@ -76,9 +85,23 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="FaceRecognition" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.xieguotao.face.service.FaceRecognition" />
+      <module name="face" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.xieguotao.face.service.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="Application.FaceApplication" />
+        <item itemvalue="Application.FaceRecognition" />
       </list>
     </recent_temporary>
   </component>
@@ -93,6 +116,14 @@
       <option name="presentableId" value="Default" />
       <updated>1571919624890</updated>
     </task>
+    <task id="LOCAL-00001" summary="上传依赖包">
+      <created>1572357895447</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1572357895447</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="UnknownFeatures">
@@ -103,10 +134,17 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="上传依赖包" />
+    <option name="LAST_COMMIT_MESSAGE" value="上传依赖包" />
   </component>
 </project>

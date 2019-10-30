@@ -32,22 +32,23 @@ import static com.arcsoft.face.toolkit.ImageFactory.getRGBData;
 public class FaceRecognition implements InitializingBean, DisposableBean {
 
     // 对外静态文件地址前缀
-    private String addressAndPort = "http://172.16.0.209:8083/static/";
+    private String addressAndPort = "http://localhost:8083/static/";
+    private String faceLocal = System.getenv("FACELOCAL");
     // 本地存储对外文件地址前缀
-    private String localFilePrefix = "D:\\temp\\";
+    private String localFilePrefix = faceLocal + "static/";
 
     private volatile int initFlag = 0;
     private FaceEngine gFaceEngine = null;
     private FaceResult faceResult = new FaceResult();
-    private String facePhotoPath = localFilePrefix + "facePhoto\\";
+    private String facePhotoPath = localFilePrefix + "facePhoto/";
     private String facePhotoUrlPrefix = addressAndPort + "facePhoto/";
-    private String gOriginalPhoto = localFilePrefix + "original\\";
+    private String gOriginalPhoto = localFilePrefix + "original/";
     private String originalPhotoUrlPrefix = addressAndPort + "original/";
     // 原图片抓拍路径
-    private String oriPath = "D:\\test";
+    private String oriPath = faceLocal + "test/";
 
     // 本地重点人员图片存储地址
-    private String importantPersonLocal = localFilePrefix + "importantPerson\\";
+    private String importantPersonLocal = localFilePrefix + "importantPerson/";
     // 重点人员图片url前缀
     private String importantPersonUrlPrefix = addressAndPort + "importantPerson/";
     // 保持重点人员图片url
@@ -149,7 +150,7 @@ public class FaceRecognition implements InitializingBean, DisposableBean {
         String appId = "4GDCFPjtDcWwcsUxmpA9M2T6xq4bpsUB2dCYQ7H9sgKi";
         String sdkKey = "7rKvRkiwJKhoyVuTxw7gs4WNxz5PxRSTRvdWdkaN6wU5";
 
-        FaceEngine faceEngine = new FaceEngine("d:\\arcsoft-lib");
+        FaceEngine faceEngine = new FaceEngine(faceLocal +  "arcsoft-lib");
         //激活引擎
         int activeCode = faceEngine.activeOnline(appId, sdkKey);
 
