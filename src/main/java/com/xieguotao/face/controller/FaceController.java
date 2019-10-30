@@ -34,6 +34,12 @@ public class FaceController {
 
     }
 
+    @GetMapping("/testString")
+    @ResponseBody
+    public String testString() {
+        return "接口测试";
+    }
+
     @PostMapping("/test")
     @ResponseBody
     public String test(MultipartFile file) throws IOException {

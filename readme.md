@@ -25,4 +25,4 @@ source ~/.bashrc
 ### 启动docker
 service docker start（stop/restart）
 ### 编译工程，运行
-DOCKER_HOST=unix:///run/docker.sock mvn clean install docker:build
+mvn clean install docker:build
