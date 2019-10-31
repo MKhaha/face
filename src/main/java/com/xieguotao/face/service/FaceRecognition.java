@@ -29,16 +29,15 @@ import static com.arcsoft.face.toolkit.ImageFactory.getRGBData;
 
 @Service("faceRecognition")
 @Slf4j
-public class FaceRecognition implements InitializingBean, DisposableBean {
+public class FaceRecognition implements DisposableBean {
 
     // 对外静态文件地址前缀
     private String addressAndPort = "http://localhost:8083/static/";
-    private String faceLocal = "/root/faceLocal/";
+    private String faceLocal = System.getenv("FACELOCAL");
     // 本地存储对外文件地址前缀
     private String localFilePrefix = faceLocal + "static/";
 
-    private volatile int initFlag = 0;
-    private FaceEngine gFaceEngine = null;
+    private volatile FaceEngine gFaceEngine = null;
     private FaceResult faceResult = new FaceResult();
     private String facePhotoPath = localFilePrefix + "facePhoto/";
     private String facePhotoUrlPrefix = addressAndPort + "facePhoto/";
@@ -135,28 +134,28 @@ public class FaceRecognition implements InitializingBean, DisposableBean {
 
     @Override
     public void destroy() throws Exception {
-        if (initFlag != 0) {
+        if (gFaceEngine != null) {
             // 引擎卸载
             int unInitCode = gFaceEngine.unInit();
         }
     }
 
-    @Override
-    public void afterPropertiesSet() throws Exception {
-        initFaceEngine();
-    }
+//    @Override
+//    public void afterPropertiesSet() throws Exception {
+//        initFaceEngine();
+//    }
 
-    private void initFaceEngine() {
+    public void initFaceEngine() {
         String appId = "4GDCFPjtDcWwcsUxmpA9M2T6xq4bpsUB2dCYQ7H9sgKi";
         String sdkKey = "7rKvRkiwJKhoyVuTxw7gs4WNxz5PxRSTRvdWdkaN6wU5";
 
-//        FaceEngine faceEngine = new FaceEngine(faceLocal +  "arcsoft-lib");
-        FaceEngine faceEngine = new FaceEngine(faceLocal);
+        FaceEngine faceEngine = new FaceEngine(faceLocal +  "arcsoft-lib");
         //激活引擎
         int activeCode = faceEngine.activeOnline(appId, sdkKey);
 
         if (activeCode != ErrorInfo.MOK.getValue() && activeCode != ErrorInfo.MERR_ASF_ALREADY_ACTIVATED.getValue()) {
             System.out.println("引擎激活失败");
+            return;
         }
 
         //引擎配置
@@ -183,7 +182,6 @@ public class FaceRecognition implements InitializingBean, DisposableBean {
             System.out.println("初始化引擎失败");
         } else {
             gFaceEngine = faceEngine;
-            initFlag = 1;
         }
 
     }
@@ -416,16 +414,17 @@ public class FaceRecognition implements InitializingBean, DisposableBean {
     }
 
     private void faceRecognition(String imagePath) {
-        if (initFlag == 0) {
-            return;
+        if (gFaceEngine == null) {
+            initFaceEngine();
+            if (gFaceEngine == null) {
+                return;
+            }
         }
-
-        FaceEngine faceEngine = gFaceEngine;
 
         //人脸检测
         ImageInfo imageInfo = getRGBData(new File(imagePath));
         List<FaceInfo> faceInfoList = new ArrayList<FaceInfo>();
-        int detectCode = faceEngine.detectFaces(imageInfo.getImageData(), imageInfo.getWidth(), imageInfo.getHeight(), ImageFormat.CP_PAF_BGR24, faceInfoList);
+        int detectCode = gFaceEngine.detectFaces(imageInfo.getImageData(), imageInfo.getWidth(), imageInfo.getHeight(), ImageFormat.CP_PAF_BGR24, faceInfoList);
         System.out.println(faceInfoList);
 
         if (faceInfoList.size() == 0) {
@@ -439,12 +438,12 @@ public class FaceRecognition implements InitializingBean, DisposableBean {
         configuration.setSupportFace3dAngle(true);
         configuration.setSupportGender(true);
         configuration.setSupportLiveness(true);
-        int processCode = faceEngine.process(imageInfo.getImageData(), imageInfo.getWidth(), imageInfo.getHeight(), ImageFormat.CP_PAF_BGR24, faceInfoList, configuration);
+        int processCode = gFaceEngine.process(imageInfo.getImageData(), imageInfo.getWidth(), imageInfo.getHeight(), ImageFormat.CP_PAF_BGR24, faceInfoList, configuration);
 
 
         //性别检测
         List<GenderInfo> genderInfoList = new ArrayList<GenderInfo>();
-        int genderCode = faceEngine.getGender(genderInfoList);
+        int genderCode = gFaceEngine.getGender(genderInfoList);
         if (genderCode != ErrorInfo.MOK.getValue()) {
             System.out.println("性别检测失败");
         } else {
@@ -453,7 +452,7 @@ public class FaceRecognition implements InitializingBean, DisposableBean {
 
         //年龄检测
         List<AgeInfo> ageInfoList = new ArrayList<AgeInfo>();
-        int ageCode = faceEngine.getAge(ageInfoList);
+        int ageCode = gFaceEngine.getAge(ageInfoList);
         if (ageCode != ErrorInfo.MOK.getValue()) {
             System.out.println("年龄检测失败");
         } else {
@@ -462,14 +461,14 @@ public class FaceRecognition implements InitializingBean, DisposableBean {
 
         //3D信息检测
         List<Face3DAngle> face3DAngleList = new ArrayList<Face3DAngle>();
-        int face3dCode = faceEngine.getFace3DAngle(face3DAngleList);
+        int face3dCode = gFaceEngine.getFace3DAngle(face3DAngleList);
         if (face3DAngleList.size() != 0) {
             System.out.println("3D角度：" + face3DAngleList.get(0).getPitch() + "," + face3DAngleList.get(0).getRoll() + "," + face3DAngleList.get(0).getYaw() + "\n");
         }
 
         //活体检测
         List<LivenessInfo> livenessInfoList = new ArrayList<LivenessInfo>();
-        int livenessCode = faceEngine.getLiveness(livenessInfoList);
+        int livenessCode = gFaceEngine.getLiveness(livenessInfoList);
         if (livenessInfoList.size() != 0) {
             System.out.println("活体：" + livenessInfoList.get(0).getLiveness() + "\n");
         }
@@ -490,25 +489,25 @@ public class FaceRecognition implements InitializingBean, DisposableBean {
         //IR属性处理
         ImageInfo imageInfoGray = getGrayData(new File(imagePath));
         List<FaceInfo> faceInfoListGray = new ArrayList<FaceInfo>();
-        int detectCodeGray = faceEngine.detectFaces(imageInfoGray.getImageData(), imageInfoGray.getWidth(), imageInfoGray.getHeight(), ImageFormat.CP_PAF_GRAY, faceInfoListGray);
+        int detectCodeGray = gFaceEngine.detectFaces(imageInfoGray.getImageData(), imageInfoGray.getWidth(), imageInfoGray.getHeight(), ImageFormat.CP_PAF_GRAY, faceInfoListGray);
 
         FunctionConfiguration configuration2 = new FunctionConfiguration();
         configuration2.setSupportIRLiveness(true);
-        int processCode2 = faceEngine.processIr(imageInfoGray.getImageData(), imageInfoGray.getWidth(), imageInfoGray.getHeight(), ImageFormat.CP_PAF_GRAY, faceInfoListGray, configuration2);
+        int processCode2 = gFaceEngine.processIr(imageInfoGray.getImageData(), imageInfoGray.getWidth(), imageInfoGray.getHeight(), ImageFormat.CP_PAF_GRAY, faceInfoListGray, configuration2);
         //IR活体检测
         List<IrLivenessInfo> irLivenessInfo = new ArrayList<IrLivenessInfo>();
-        int livenessIr = faceEngine.getLivenessIr(irLivenessInfo);
+        int livenessIr = gFaceEngine.getLivenessIr(irLivenessInfo);
         if (irLivenessInfo.size() != 0) {
             System.out.println("IR活体：" + irLivenessInfo.get(0).getLiveness());
         }
 
         //设置活体检测参数
-        int paramCode = faceEngine.setLivenessParam(0.8f, 0.8f);
+        int paramCode = gFaceEngine.setLivenessParam(0.8f, 0.8f);
 
 
         //获取激活文件信息
         ActiveFileInfo activeFileInfo = new ActiveFileInfo();
-        int activeFileCode = faceEngine.getActiveFileInfo(activeFileInfo);
+        int activeFileCode = gFaceEngine.getActiveFileInfo(activeFileInfo);
 
     }
 

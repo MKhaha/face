@@ -26,3 +26,15 @@ source ~/.bashrc
 service docker start（stop/restart）
 ### 编译工程，运行
 mvn clean install docker:build
+###
+docker run -it --privileged=true --env FACELOCAL=/root/faceLocal/ -v /root/faceLocal/:/root/faceLocal/:ro -p 8081:8081 mydocker/face
+
+docker run -it --env FACELOCAL=/root/faceLocal/ -v /root/faceLocal/:/root/faceLocal/ -p 8081:8081 mydocker/face
+
+docker run -d -p 8081:8080 springboot-demo
+
+docker run -it --privileged=true -p 9999:8080 --mount type=bind,source=/root/logs,target=/logs springboot-demo
+
+
+将Dockerfile和jar包放在一起，使用下列命令也可以打包
+docker build -t xxx .

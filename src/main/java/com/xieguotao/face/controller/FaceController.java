@@ -9,6 +9,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/face")
@@ -16,6 +19,22 @@ public class FaceController {
 
     @Autowired
     private FaceRecognition faceRecognition;
+
+    private List<File> listFiles(File file) {
+        List<File> fileList = new ArrayList<>();
+        if (file.isDirectory()) {
+            File[] files = file.listFiles();
+            if (files != null && files.length != 0) {
+                for (File listFile : files) {
+                    fileList.addAll(listFiles(listFile));
+                }
+            }
+        } else {
+            fileList.add(file);
+        }
+        return fileList;
+    }
+
 
     @GetMapping("/getFaceResult")
     @ResponseBody
@@ -39,6 +58,20 @@ public class FaceController {
     public String testString() {
         return "接口测试";
     }
+
+    @GetMapping("/testStringsss")
+    @ResponseBody
+    public String testStringsss() {
+//        List<File> fileList = listFiles(new File("/root/faceLocal"));
+//        for (File file : fileList) {
+//            System.out.println(file.getAbsolutePath());
+//        }
+
+        faceRecognition.initFaceEngine();
+
+        return "faceRecognition.getFaceResult()";
+    }
+
 
     @PostMapping("/test")
     @ResponseBody

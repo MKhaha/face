@@ -17,7 +17,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>1.8</java.version>
-		<docker.image.prefix>mydocker</docker.image.prefix>
+<!--		<docker.image.prefix>mydocker</docker.image.prefix>-->
 		<maven.test.skip>true</maven.test.skip>
 	</properties>
 
@@ -64,32 +64,32 @@
 <!--					<includeSystemScope>true</includeSystemScope>-->
 <!--				</configuration>-->
 			</plugin>
-			<!-- Docker maven plugin -->
-			<plugin>
-				<groupId>com.spotify</groupId>
-				<artifactId>docker-maven-plugin</artifactId>
-				<version>1.0.0</version>
-				<configuration>
-					<imageName>${docker.image.prefix}/${project.artifactId}</imageName>
-<!--					<dockerHost>http://192.168.40.134:2375</dockerHost>-->
-					<dockerDirectory>src/main/docker</dockerDirectory>
-					<resources>
-						<resource>
-							<targetPath>/</targetPath>
-							<directory>${project.build.directory}</directory>
-							<include>${project.build.finalName}.jar</include>
-						</resource>
+<!--			&lt;!&ndash; Docker maven plugin &ndash;&gt;-->
+<!--			<plugin>-->
+<!--				<groupId>com.spotify</groupId>-->
+<!--				<artifactId>docker-maven-plugin</artifactId>-->
+<!--				<version>1.0.0</version>-->
+<!--				<configuration>-->
+<!--					<imageName>${docker.image.prefix}/${project.artifactId}</imageName>-->
+<!--&lt;!&ndash;					<dockerHost>http://192.168.40.134:2375</dockerHost>&ndash;&gt;-->
+<!--					<dockerDirectory>src/main/docker</dockerDirectory>-->
+<!--					<resources>-->
 <!--						<resource>-->
 <!--							<targetPath>/</targetPath>-->
-<!--							<directory>${project.build.outputDirectory}</directory>&lt;!&ndash; 资源所在目录 &ndash;&gt;-->
-<!--							<include>config/fdfs_client.conf</include> &lt;!&ndash; 程序依赖的fastfds配置文件 &ndash;&gt;-->
+<!--							<directory>${project.build.directory}</directory>-->
+<!--							<include>${project.build.finalName}.jar</include>-->
 <!--						</resource>-->
-					</resources>
-					<!-- 与maven配置文件settings.xml中配置的server.id一致，用于推送镜像 -->
-					<serverId>docker-hub</serverId>
-				</configuration>
-			</plugin>
-			<!-- Docker maven plugin -->
+<!--&lt;!&ndash;						<resource>&ndash;&gt;-->
+<!--&lt;!&ndash;							<targetPath>/</targetPath>&ndash;&gt;-->
+<!--&lt;!&ndash;							<directory>${project.build.outputDirectory}</directory>&lt;!&ndash; 资源所在目录 &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;							<include>config/fdfs_client.conf</include> &lt;!&ndash; 程序依赖的fastfds配置文件 &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;						</resource>&ndash;&gt;-->
+<!--					</resources>-->
+<!--					&lt;!&ndash; 与maven配置文件settings.xml中配置的server.id一致，用于推送镜像 &ndash;&gt;-->
+<!--					<serverId>docker-hub</serverId>-->
+<!--				</configuration>-->
+<!--			</plugin>-->
+<!--			&lt;!&ndash; Docker maven plugin &ndash;&gt;-->
 		</plugins>
 	</build>
 
