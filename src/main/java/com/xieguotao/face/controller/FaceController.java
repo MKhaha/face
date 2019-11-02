@@ -20,22 +20,6 @@ public class FaceController {
     @Autowired
     private FaceRecognition faceRecognition;
 
-    private List<File> listFiles(File file) {
-        List<File> fileList = new ArrayList<>();
-        if (file.isDirectory()) {
-            File[] files = file.listFiles();
-            if (files != null && files.length != 0) {
-                for (File listFile : files) {
-                    fileList.addAll(listFiles(listFile));
-                }
-            }
-        } else {
-            fileList.add(file);
-        }
-        return fileList;
-    }
-
-
     @GetMapping("/getFaceResult")
     @ResponseBody
     public FaceResult getFaceResult() {
@@ -51,37 +35,5 @@ public class FaceController {
         System.out.println(result);
         return result;
 
-    }
-
-    @GetMapping("/testString")
-    @ResponseBody
-    public String testString() {
-        return "接口测试";
-    }
-
-    @GetMapping("/testStringsss")
-    @ResponseBody
-    public String testStringsss() {
-//        List<File> fileList = listFiles(new File("/root/faceLocal"));
-//        for (File file : fileList) {
-//            System.out.println(file.getAbsolutePath());
-//        }
-
-        faceRecognition.initFaceEngine();
-
-        return "faceRecognition.getFaceResult()";
-    }
-
-
-    @PostMapping("/test")
-    @ResponseBody
-    public String test(MultipartFile file) throws IOException {
-        System.out.println("测试成功");
-
-        File temp = new File("D:\\testXXX");
-        file.transferTo(temp);
-
-        System.out.println("测试成功");
-        return "测试成功";
     }
 }

@@ -29,10 +29,10 @@ import static com.arcsoft.face.toolkit.ImageFactory.getRGBData;
 
 @Service("faceRecognition")
 @Slf4j
-public class FaceRecognition implements DisposableBean {
+public class FaceRecognition implements InitializingBean, DisposableBean {
 
     // 对外静态文件地址前缀
-    private String addressAndPort = "http://localhost:8083/static/";
+    private String addressAndPort = "http://172.16.0.212:8083/static/";
     private String faceLocal = System.getenv("FACELOCAL");
     // 本地存储对外文件地址前缀
     private String localFilePrefix = faceLocal + "static/";
@@ -77,13 +77,17 @@ public class FaceRecognition implements DisposableBean {
         String originalFileName = (new File(originPhoto)).getName();
 
         String fileName = "cut" + i + originalFileName;
+
+        int left = faceInfo.getRect().left;
+        int top = faceInfo.getRect().top;
+
         imageUtil.cutImage(
                 originPhoto,
                 localPath + fileName,
-                faceInfo.getRect().left,
-                faceInfo.getRect().top,
-                faceInfo.getRect().right - faceInfo.getRect().left,
-                faceInfo.getRect().bottom - faceInfo.getRect().top);
+                left,
+                top,
+                faceInfo.getRect().right - left,
+                faceInfo.getRect().bottom - top);
 
         return urlPath + fileName;
     }
@@ -140,10 +144,10 @@ public class FaceRecognition implements DisposableBean {
         }
     }
 
-//    @Override
-//    public void afterPropertiesSet() throws Exception {
-//        initFaceEngine();
-//    }
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        initFaceEngine();
+    }
 
     public void initFaceEngine() {
         String appId = "4GDCFPjtDcWwcsUxmpA9M2T6xq4bpsUB2dCYQ7H9sgKi";
@@ -312,7 +316,7 @@ public class FaceRecognition implements DisposableBean {
     /**
      * 每20秒更新一次重要人员图片信息
      */
-    @Scheduled(fixedRate = 20000)
+    @Scheduled(fixedRate = 4000)
     public void getImportantPersonFaceFeature() {
 
         log.info("getImportantPersonFaceFeature：执行任务");
