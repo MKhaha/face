@@ -32,7 +32,7 @@ import static com.arcsoft.face.toolkit.ImageFactory.getRGBData;
 public class FaceRecognition implements InitializingBean, DisposableBean {
 
     // 对外静态文件地址前缀
-    private String addressAndPort = "http://172.16.0.212:8083/static/";
+    private String addressAndPort = "http://192.168.20.134:8083/static/";
     private String faceLocal = System.getenv("FACELOCAL");
     // 本地存储对外文件地址前缀
     private String localFilePrefix = faceLocal + "static/";
@@ -57,6 +57,8 @@ public class FaceRecognition implements InitializingBean, DisposableBean {
 
     @Autowired
     private ImageUtil imageUtil;
+    @Autowired
+    private LocalIpAddress localIpAddress;
 
     /**
      * 从原图片中切出小图，存储，并返回图片相对地址；
@@ -147,6 +149,9 @@ public class FaceRecognition implements InitializingBean, DisposableBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         initFaceEngine();
+
+        addressAndPort = "http://" + localIpAddress.getIpAddress("wlan1") + ":8083/static/";
+
     }
 
     public void initFaceEngine() {
@@ -198,6 +203,16 @@ public class FaceRecognition implements InitializingBean, DisposableBean {
         }
     }
 
+    private void clearResult(FaceResult faceResult) {
+        if (faceResult == null) {
+        } else {
+            faceResult.setHaveFace(false);
+            faceResult.setHaveImportPerson(false);
+            faceResult.setOriginalPhotoUrl(null);
+            faceResult.setMyFaceInfoList(null);
+        }
+    }
+
     private void setMyFaceInfo(
             String imagePath,
             ImageInfo imageInfo,
@@ -213,18 +228,14 @@ public class FaceRecognition implements InitializingBean, DisposableBean {
 
         synchronized (faceResult) {
 
+            clearResult(faceResult);
+
             faceResult.setHaveFace(true);
             faceResult.setHaveImportPerson(false);
             setOriginalPhoto(imagePath);
-
-            if (faceResult.getMyFaceInfoList() == null) {
-                faceResult.setMyFaceInfoList(new ArrayList<>());
-            } else {
-                faceResult.getMyFaceInfoList().clear();
-            }
+            faceResult.setMyFaceInfoList(new ArrayList<>());
 
             for (int i = 0; i < faceInfoList.size(); i++) {
-                System.out.println("打印人脸识别信息：" + "i:" + faceInfoList.get(i));
                 MyFaceInfo myFaceInfo = new MyFaceInfo();
                 faceResult.getMyFaceInfoList().add(myFaceInfo);
                 String url = setFacePhoto(faceInfoList.get(i), i, imagePath, facePhotoPath, facePhotoUrlPrefix);
@@ -314,7 +325,7 @@ public class FaceRecognition implements InitializingBean, DisposableBean {
     }
 
     /**
-     * 每20秒更新一次重要人员图片信息
+     * 每4秒更新一次重要人员图片信息
      */
     @Scheduled(fixedRate = 4000)
     public void getImportantPersonFaceFeature() {
@@ -394,7 +405,7 @@ public class FaceRecognition implements InitializingBean, DisposableBean {
         }
     }
 
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(fixedRate = 3000)
     public void faceRecognitionTask() {
         log.info("开始任务" + (new Date()).toString());
         File[] files = (new File(oriPath)).listFiles();
@@ -550,29 +561,30 @@ public class FaceRecognition implements InitializingBean, DisposableBean {
         }
 
         FaceEngine faceEngine = gFaceEngine;
+        String resultString = "重点关注人员如下：";
 
         // 将MultipartFile转换为临时文件
         File tempFile;
         if (file == null || file.getOriginalFilename() == null) {
             importPersonUrls = getImportPersonUrls();
-            importPersonUrls.setInfo("上传文件名错误");
+            importPersonUrls.setInfo(resultString);
             return importPersonUrls;
         }
         String fileSuffix = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
         try {
             tempFile = File.createTempFile("temp", fileSuffix);
-            System.out.println("临时文件地址如下：");
-            System.out.println(tempFile.getAbsolutePath());
         } catch (IOException e) {
             importPersonUrls = getImportPersonUrls();
-            importPersonUrls.setInfo("无法创建临时文件");
+            log.error("无法创建临时文件");
+            importPersonUrls.setInfo(resultString);
             return importPersonUrls;
         }
         try {
             file.transferTo(tempFile);
         } catch (Exception e) {
             importPersonUrls = getImportPersonUrls();
-            importPersonUrls.setInfo("前端传递文件转换为普通文件出错");
+            log.error("前端传递文件转换为普通文件出错");
+            importPersonUrls.setInfo(resultString);
             return importPersonUrls;
         }
 
@@ -588,7 +600,8 @@ public class FaceRecognition implements InitializingBean, DisposableBean {
 
         if (detectCode != ErrorInfo.MOK.getValue() || faceInfoList.size() == 0) {
             importPersonUrls = getImportPersonUrls();
-            importPersonUrls.setInfo("前端传递文件转换为普通文件出错");
+            log.error("前端传递文件转换为普通文件出错");
+            importPersonUrls.setInfo(resultString);
             return importPersonUrls;
         }
 
