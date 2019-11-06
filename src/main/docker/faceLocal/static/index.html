@@ -3,21 +3,22 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <link rel="icon" href="easyicon.net.ico" type="image/x-icon"/> 
+    <title>第五组：MEC视频分析演示界面</title>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script>
         $(document).ready(function() {
             getData();
             setInterval(function working() {
                 getData()
-            }, 600000);
+            }, 3000);
         });
 
         function getData() {
             $.ajax({
                 type: "GET",
-                url: "http://localhost:8083/face/getFaceResult",
-                async: false,
+                url: "http://172.16.0.212:8083/face/getFaceResult",
+                async: true,
                 success: function(data) {
                     console.log(data);
                     console.log(data.originalPhotoUrl);
@@ -41,21 +42,34 @@
                     if (s < 10) {
                         s = "0" + s;
                     }
-                    var date = year + "年" + mon + "月" + date + "日" + weeks[week] + h + ':' + m + ':' + s;
-                    var desc = '出现重要人物';
-                    if (!data.haveImportPerson) {
-                        desc = "未出现重要人物";
-                    }
+                   
                     $("#uinfo").empty();
-                    $("#uinfo").append('<p style="font-size:28px;color:red">' + date + '</p><p style="font-size:28px;color:red">' + desc + '</p>');
                     $("#mainPic").empty();
-                    $('#mainPic').append('<img src="' + data.originalPhotoUrl + '" style="width:30%;height:30%;"></img>');
                     $("#anyPerson").empty();
-                    for (var i = 0; i < data.myFaceInfoList.length; i++) {
-                        if (data.myFaceInfoList[i].similarImportPersonUrl != null) {
-                            $('#anyPerson').append('<div style="width:100%;float:left;border-bottom: 2px solid black;"><div style="width:30%;height:100%;float:left;padding: 10px"><pre><p style="font-size:22px;color:red">' + data.myFaceInfoList[i].info + '</p></pre><p style="font-size:28px;color:red">' + "相似度：" + data.myFaceInfoList[i].similarScore + '%</p></div><div style="width:30%;height:100%;float:left;padding: 10px"><img src="' + data.myFaceInfoList[i].facePhotoUrl + '" style="width:60%;height:60%;margin-left10px"  ></img></div><div style="width:30%;height:100%;float:left;padding: 10px"><img src="' + data.myFaceInfoList[i].similarImportPersonUrl + '" style="width:60%;height:60%;"  ></img></div></div>');
-                        } else {
-                            $('#anyPerson').append('<div style="width:100%;float:left;border-bottom: 2px solid black;"><div style="width:30%;height:100%;float:left;padding: 10px"><pre><p style="font-size:22px;color:red">' + data.myFaceInfoList[i].info + '</p></pre><p style="font-size:28px;color:red">' + "相似度：" + data.myFaceInfoList[i].similarScore + '%</p></div><div style="width:30%;height:100%;float:left;padding: 10px"><img src="' + data.myFaceInfoList[i].facePhotoUrl + '" style="width:60%;height:60%;margin-left:10px"  ></img></div></div>');
+                    // var date = year + "年" + mon + "月" + date + "日" + weeks[week] + h + ':' + m + ':' + s;
+                    var msg = year + '年' + mon + '月' + date + '日' + h + ':' + m + ':' + s;
+                    if (data.haveFace && data.haveImportPerson) {
+                        msg += ' : 识别出人脸，出现重点关注人员';
+                        $("#uinfo").append('<p style="font-size:24px;color:red">' + msg + '</p>');
+                    } else if(data.haveFace && !data.haveImportPerson) {
+                        msg += " : 识别出人脸，未出现重点关注人员";
+                        $("#uinfo").append('<p style="font-size:24px;color:green">' + msg + '</p>');
+                    } else {
+                        msg += " : 无人脸信息";
+                        $("#uinfo").append('<p style="font-size:24px;color:black">' + msg + '</p>');
+                    }
+
+                    if (data.originalPhotoUrl != null) {
+                        $('#mainPic').append('<img src="' + data.originalPhotoUrl + '" style="width:30%;height:30%;"></img>');
+                    }
+
+                    if (data.myFaceInfoList != null) {
+                        for (var i = 0; i < data.myFaceInfoList.length; i++) {
+                            if (data.myFaceInfoList[i].similarImportPersonUrl != null) {
+                                $('#anyPerson').append('<div style="width:100%;float:left;border-bottom: 2px solid black;"><div style="width:30%;height:100%;float:left;padding: 10px"><pre><p style="font-size:22px;color:red">' + data.myFaceInfoList[i].info + '</p></pre><p style="font-size:28px;color:red">' + "相似度：" + data.myFaceInfoList[i].similarScore + '%</p></div><div style="width:30%;height:100%;float:left;padding: 10px"><img src="' + data.myFaceInfoList[i].facePhotoUrl + '" style="width:60%;height:60%;margin-left10px"  ></img></div><div style="width:30%;height:100%;float:left;padding: 10px"><img src="' + data.myFaceInfoList[i].similarImportPersonUrl + '" style="width:60%;height:60%;"  ></img></div></div>');
+                            } else {
+                                $('#anyPerson').append('<div style="width:100%;float:left;border-bottom: 2px solid black;"><div style="width:30%;height:100%;float:left;padding: 10px"><pre><p style="font-size:22px;color:red">' + data.myFaceInfoList[i].info + '</p></pre><p style="font-size:28px;color:red">' + "相似度：" + data.myFaceInfoList[i].similarScore + '%</p></div><div style="width:30%;height:100%;float:left;padding: 10px"><img src="' + data.myFaceInfoList[i].facePhotoUrl + '" style="width:60%;height:60%;margin-left:10px"  ></img></div></div>');
+                            }
                         }
                     }
                 },
@@ -75,7 +89,7 @@
 
     .info {
         width: 100%;
-        height: 100px;
+        /* height: 100px; */
         border-bottom: 2px solid black;
     }
 
@@ -97,6 +111,11 @@
         width: 100%;
         /*height: 500px;*/
     }
+
+    p {
+        margin-top: 2px;
+        margin-bottom: 2px;
+    }
     </style>
 </head>
 
@@ -111,7 +130,7 @@
         <div class="upload" id="uploadImportPerson">
             <p>
                 <input type="file" id="upfile" name="file">
-                <input type="button" id="uploadButton" value="上传重要人员图片">
+                <input type="button" id="uploadButton" value="获取/上传重点关注人员图片">
             </p>
             <div id="importantPerson"></div>
         </div>
@@ -124,7 +143,7 @@
             fd.append("file", $("#upfile").get(0).files[0]);
 
             $.ajax({
-                url: 'http://localhost:8083/face/uploadImportPerson',
+                url: 'http://172.16.0.212:8083/face/uploadImportPerson',
                 enctype: 'multipart/form-data',
                 type: 'POST',
                 cache: false,
