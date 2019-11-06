@@ -9,19 +9,18 @@ import java.net.NetworkInterface;
 import java.util.Enumeration;
 
 @Slf4j
-@Component("localIpAddress")
 public class LocalIpAddress {
 
-    public String getIpAddress(String internetCardName) {
+    public static String getIpAddress(String internetCardName) {
 
         try {
             Enumeration<NetworkInterface> enumeration = NetworkInterface.getNetworkInterfaces();
             while (enumeration.hasMoreElements()) {
                 NetworkInterface networkInterface = enumeration.nextElement();
-//                System.out.println("name:");
-//                System.out.println(networkInterface.getName());
-//                System.out.println("displayname");
-//                System.out.println(networkInterface.getDisplayName());
+                System.out.println("name:");
+                System.out.println(networkInterface.getName());
+                System.out.println("displayname");
+                System.out.println(networkInterface.getDisplayName());
                 if (networkInterface.getName() != null && networkInterface.getName().equals(internetCardName)) {
                     Enumeration<InetAddress> en = networkInterface.getInetAddresses();
                     while (en.hasMoreElements()) {
@@ -36,5 +35,9 @@ public class LocalIpAddress {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public static void main(String[] args) {
+        getIpAddress("wlan1");
     }
 }

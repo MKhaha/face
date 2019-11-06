@@ -32,7 +32,10 @@ import static com.arcsoft.face.toolkit.ImageFactory.getRGBData;
 public class FaceRecognition implements InitializingBean, DisposableBean {
 
     // 对外静态文件地址前缀
-    private String addressAndPort = "http://192.168.20.134:8083/static/";
+//    private String addressAndPort = "http://172.16.0.212:8083/static/";
+
+    private String addressAndPort = "http://" + LocalIpAddress.getIpAddress("wlan1") + ":8083/static/";
+
     private String faceLocal = System.getenv("FACELOCAL");
     // 本地存储对外文件地址前缀
     private String localFilePrefix = faceLocal + "static/";
@@ -57,8 +60,6 @@ public class FaceRecognition implements InitializingBean, DisposableBean {
 
     @Autowired
     private ImageUtil imageUtil;
-    @Autowired
-    private LocalIpAddress localIpAddress;
 
     /**
      * 从原图片中切出小图，存储，并返回图片相对地址；
@@ -80,18 +81,22 @@ public class FaceRecognition implements InitializingBean, DisposableBean {
 
         String fileName = "cut" + i + originalFileName;
 
-        int left = faceInfo.getRect().left;
-        int top = faceInfo.getRect().top;
+        int left = Math.max(faceInfo.getRect().left, 0);
+        int top = Math.max(faceInfo.getRect().top, 0);
 
-        imageUtil.cutImage(
-                originPhoto,
-                localPath + fileName,
-                left,
-                top,
-                faceInfo.getRect().right - left,
-                faceInfo.getRect().bottom - top);
+        try {
+            imageUtil.cutImage(
+                    originPhoto,
+                    localPath + fileName,
+                    left,
+                    top,
+                    Math.max(faceInfo.getRect().right - left, 0),
+                    Math.max(faceInfo.getRect().bottom - top, 0));
 
-        return urlPath + fileName;
+            return urlPath + fileName;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private void copyFile(String src, String des) {
@@ -149,9 +154,6 @@ public class FaceRecognition implements InitializingBean, DisposableBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         initFaceEngine();
-
-        addressAndPort = "http://" + localIpAddress.getIpAddress("wlan1") + ":8083/static/";
-
     }
 
     public void initFaceEngine() {
@@ -239,6 +241,9 @@ public class FaceRecognition implements InitializingBean, DisposableBean {
                 MyFaceInfo myFaceInfo = new MyFaceInfo();
                 faceResult.getMyFaceInfoList().add(myFaceInfo);
                 String url = setFacePhoto(faceInfoList.get(i), i, imagePath, facePhotoPath, facePhotoUrlPrefix);
+                if (url == null) {
+                    continue;
+                }
                 myFaceInfo.setFacePhotoUrl(url);
                 myFaceInfo.setInfo("");
 
@@ -246,25 +251,25 @@ public class FaceRecognition implements InitializingBean, DisposableBean {
                     myFaceInfo.setInfo(
                             myFaceInfo.getInfo() +
                                     "性别：" +
-                                    (genderInfoList.get(0).getGender() == 0 ? "男" : "女") +
+                                    (genderInfoList.get(i).getGender() == 0 ? "男" : "女") +
                                     "\n");
                 }
 
                 if (ageCode == ErrorInfo.MOK.getValue() && ageInfoList.size() != 0) {
-                    myFaceInfo.setInfo(myFaceInfo.getInfo() + "年龄：" + ageInfoList.get(0).getAge() + "\n");
+                    myFaceInfo.setInfo(myFaceInfo.getInfo() + "年龄：" + ageInfoList.get(i).getAge() + "\n");
                 }
 
                 if (face3dCode == ErrorInfo.MOK.getValue() && face3DAngleList.size() != 0) {
                     myFaceInfo.setInfo(myFaceInfo.getInfo() +
                             "3D角度：" +
-                            Math.round(face3DAngleList.get(0).getPitch()) + "," +
-                            Math.round(face3DAngleList.get(0).getRoll()) + "," +
-                            Math.round(face3DAngleList.get(0).getYaw()) + "\n");
+                            Math.round(face3DAngleList.get(i).getPitch()) + "," +
+                            Math.round(face3DAngleList.get(i).getRoll()) + "," +
+                            Math.round(face3DAngleList.get(i).getYaw()) + "\n");
                 }
 
                 if (livenessCode == ErrorInfo.MOK.getValue() && livenessInfoList.size() != 0) {
                     myFaceInfo.setInfo(myFaceInfo.getInfo() + "活体：" +
-                            (livenessInfoList.get(0).getLiveness() == 1 ? "是" : "否") +
+                            (livenessInfoList.get(i).getLiveness() == 1 ? "是" : "否") +
                             "\n");
                 }
             }

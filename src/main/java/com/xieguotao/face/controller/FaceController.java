@@ -29,11 +29,7 @@ public class FaceController {
     @PostMapping("/uploadImportPerson")
     @ResponseBody
     public ImportPersonUrls uploadImportPerson(MultipartFile file) {
-        System.out.println("接收到请求");
-        ImportPersonUrls result = faceRecognition.uploadImportPerson(file);
-        System.out.println("result++++++++++++++++++++++++");
-        System.out.println(result);
-        return result;
+        return faceRecognition.uploadImportPerson(file);
 
     }
 }
