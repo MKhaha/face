@@ -34,7 +34,7 @@ public class FaceRecognition implements InitializingBean, DisposableBean {
     // 对外静态文件地址前缀
 //    private String addressAndPort = "http://172.16.0.212:8083/static/";
 
-    private String addressAndPort = "http://" + LocalIpAddress.getIpAddress("wlan1") + ":8083/static/";
+    private String addressAndPort = "http://" + LocalIpAddress.getIpAddress(System.getenv("WLANNAME")) + ":8083/static/";
 
     private String faceLocal = System.getenv("FACELOCAL");
     // 本地存储对外文件地址前缀

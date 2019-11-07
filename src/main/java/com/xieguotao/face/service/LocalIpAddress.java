@@ -1,7 +1,6 @@
 package com.xieguotao.face.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 import java.net.Inet4Address;
 import java.net.InetAddress;
@@ -21,7 +20,7 @@ public class LocalIpAddress {
                 System.out.println(networkInterface.getName());
                 System.out.println("displayname");
                 System.out.println(networkInterface.getDisplayName());
-                if (networkInterface.getName() != null && networkInterface.getName().equals(internetCardName)) {
+                if (networkInterface.getName() != null && networkInterface.getDisplayName().equals(internetCardName)) {
                     Enumeration<InetAddress> en = networkInterface.getInetAddresses();
                     while (en.hasMoreElements()) {
                         InetAddress address = en.nextElement();
@@ -38,6 +37,23 @@ public class LocalIpAddress {
     }
 
     public static void main(String[] args) {
-        getIpAddress("wlan1");
+
+        try {
+            Enumeration<NetworkInterface> enumeration = NetworkInterface.getNetworkInterfaces();
+            while (enumeration.hasMoreElements()) {
+                NetworkInterface networkInterface = enumeration.nextElement();
+                System.out.println("name:");
+                System.out.println(networkInterface.getName());
+                System.out.println("displayname");
+                System.out.println(networkInterface.getDisplayName());
+            }
+
+            System.out.println("________");
+            System.out.println("+++");
+            String s = LocalIpAddress.getIpAddress(System.getenv("WLANNAME"));
+            System.out.println(s);
+        } catch (Exception ignored) {
+        }
+
     }
 }
